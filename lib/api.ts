@@ -1,4 +1,4 @@
-const BASE_URL = 'http://us2.bot-hosting.net:20109'
+const BASE_URL = 'https://gps-api.mdcdev.me'
 
 export interface Device {
   id: string
