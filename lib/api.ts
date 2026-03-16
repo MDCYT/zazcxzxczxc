@@ -106,10 +106,14 @@ interface TripApiResponse {
   endTime?: string
   start_time?: string
   end_time?: string
+  started_at?: string
+  ended_at?: string
   distance?: number | string | null
+  distance_km?: number | string | null
   duration?: number | string | null
   averageSpeed?: number | string | null
   average_speed?: number | string | null
+  avg_speed_kmh?: number | string | null
 }
 
 interface EventApiResponse {
@@ -257,11 +261,26 @@ class APIClient {
   private normalizeTrip(raw: TripApiResponse): Trip {
     return {
       id: String(raw.id ?? ''),
-      startTime: raw.startTime ?? raw.start_time ?? new Date().toISOString(),
-      endTime: raw.endTime ?? raw.end_time ?? new Date().toISOString(),
-      distance: this.toNumber(raw.distance) ?? 0,
+      startTime:
+        raw.startTime ||
+        raw.start_time ||
+        raw.started_at ||
+        new Date().toISOString(),
+      endTime:
+        raw.endTime ||
+        raw.end_time ||
+        raw.ended_at ||
+        new Date().toISOString(),
+      distance:
+        this.toNumber(raw.distance) ??
+        this.toNumber((raw as any).distance_km) ??
+        0,
       duration: this.toNumber(raw.duration) ?? 0,
-      averageSpeed: this.toNumber(raw.averageSpeed ?? raw.average_speed) ?? 0,
+      averageSpeed:
+        this.toNumber(raw.averageSpeed) ??
+        this.toNumber((raw as any).average_speed) ??
+        this.toNumber((raw as any).avg_speed_kmh) ??
+        0,
     }
   }
 
